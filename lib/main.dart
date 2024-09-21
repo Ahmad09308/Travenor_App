@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:travenor_app/Auth/view/pages/Splash.dart';
-import 'package:travenor_app/Auth/view/pages/view_page.dart';
 import 'package:travenor_app/Auth/view/pages/home_page.dart';
 
 void main() {
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: ViewPage(),
+        body: Splash(),
       ),
     );
   }

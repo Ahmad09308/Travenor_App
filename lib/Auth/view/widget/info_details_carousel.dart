@@ -34,7 +34,7 @@ class InfoDetailsCarousel extends StatelessWidget {
               'assets/images/2.png',
             ],
           ),
-          SizedBox(width: 16), 
+          SizedBox(width: 16),
           InfoDetails(
             title: 'La-Hotel',
             location: 'Dhaka, Bangladesh',

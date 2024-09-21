@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:travenor_app/Auth/view/pages/Forgot_Password_page.dart';
+import 'package:travenor_app/Auth/view/pages/home_page.dart';
 import 'package:travenor_app/Auth/view/pages/sing_up.dart';
-import 'package:travenor_app/Auth/view/widget/button.dart'; // زر تسجيل الدخول المخصص
-import 'package:travenor_app/Auth/view/widget/text_input_field.dart'; // مكون الحقول
-import 'package:travenor_app/Auth/view/widget/social_media_icons.dart'; // مكون الأيقونات
-
+import 'package:travenor_app/Auth/view/widget/button.dart'; 
+import 'package:travenor_app/Auth/view/widget/text_input_field.dart'; 
+import 'package:travenor_app/Auth/view/widget/social_media_icons.dart'; 
 class SignIn extends StatelessWidget {
   const SignIn({super.key});
 
@@ -35,7 +35,6 @@ class SignIn extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-
             const Center(
               child: Text(
                 'Sign in now',
@@ -47,7 +46,6 @@ class SignIn extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-
             const Center(
               child: Text(
                 'Please sign in to continue our app',
@@ -60,19 +58,16 @@ class SignIn extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-
             const TextInputField(
               hintText: 'Email',
             ),
             const SizedBox(height: 16),
-
             const TextInputField(
               hintText: 'Password',
               obscureText: true,
               suffixIcon: Icon(Icons.visibility_off),
             ),
             const SizedBox(height: 10),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -98,13 +93,20 @@ class SignIn extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-
-            CustomButton(
-              text: 'Sign In',
-              onPressed: () {},
+            Center(
+              child: CustomButton(
+                text: 'Sign In',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 20),
-
             Center(
               child: InkWell(
                 onTap: () {
@@ -142,7 +144,6 @@ class SignIn extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-
             const Center(
               child: Text(
                 'Or connect',
@@ -155,7 +156,6 @@ class SignIn extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
             const SocialMediaIcons(),
           ],
         ),

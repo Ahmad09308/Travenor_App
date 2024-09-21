@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travenor_app/Auth/view/pages/sing_in_page.dart';
-import 'package:travenor_app/Auth/view/widget/button.dart'; // زر تسجيل الدخول المخصص
-import 'package:travenor_app/Auth/view/widget/text_input_field.dart'; // مكون الحقول
-import 'package:travenor_app/Auth/view/widget/social_media_icons.dart'; // مكون الأيقونات
+import 'package:travenor_app/Auth/view/widget/button.dart'; 
+import 'package:travenor_app/Auth/view/widget/text_input_field.dart'; 
+import 'package:travenor_app/Auth/view/widget/social_media_icons.dart'; 
 
 class SignUp extends StatelessWidget {
   const SignUp({super.key});
@@ -88,9 +88,11 @@ class SignUp extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            CustomButton(
-              text: 'Sign up',
-              onPressed: () {},
+            Center(
+              child: CustomButton(
+                text: 'Sign up',
+                onPressed: () {},
+              ),
             ),
             const SizedBox(height: 20),
             Center(
@@ -129,7 +131,7 @@ class SignUp extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
             const Center(
               child: Text(
                 'Or connect',
@@ -141,7 +143,6 @@ class SignUp extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
             const SocialMediaIcons(),
           ],
         ),

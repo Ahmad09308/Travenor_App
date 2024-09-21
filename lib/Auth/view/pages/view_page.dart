@@ -50,7 +50,7 @@ class ViewPage extends StatelessWidget {
               ),
             ),
             const Positioned(
-              top: 373,
+              top: 300,
               left: 23,
               child: InfoCard(
                 title: 'Lemon Garden',
@@ -68,9 +68,9 @@ class ViewPage extends StatelessWidget {
               ),
             ),
             Positioned(
-              bottom: 40,
-              left: 20,
-              right: 20,
+              bottom: 20,
+              left: 5,
+              right: 5,
               child: InfoDetailsCarousel(),
             ),
           ],
