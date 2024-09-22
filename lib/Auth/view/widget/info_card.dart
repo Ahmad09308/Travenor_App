@@ -6,11 +6,11 @@ class InfoCard extends StatelessWidget {
   final String image;
 
   const InfoCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.distance,
     required this.image,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

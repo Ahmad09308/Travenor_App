@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 
 List participants = [
@@ -11,24 +13,26 @@ class DestinationCard extends StatelessWidget {
   final String title;
   final String location;
   final double rating;
+  final VoidCallback onSave;
 
-  const DestinationCard({
+  const DestinationCard({super.key, 
     required this.imageUrl,
     required this.title,
     required this.location,
     required this.rating,
+    required this.onSave,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 250,
-      margin: EdgeInsets.only(right: 16),
+      margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
+          const BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
             spreadRadius: 3,
@@ -41,7 +45,7 @@ class DestinationCard extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
+                borderRadius: const BorderRadius.all(Radius.circular(16)),
                 child: Image.asset(
                   imageUrl,
                   height: 225,
@@ -54,15 +58,15 @@ class DestinationCard extends StatelessWidget {
                 right: 10,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
+                    color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.bookmark_border,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
-                    onPressed: () {},
+                    onPressed: onSave,
                   ),
                 ),
               ),
@@ -77,23 +81,25 @@ class DestinationCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      title,
-                      style: TextStyle(
+                      title.length > 20
+                          ? '${title.substring(0, 18)}...'
+                          : title,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.star,
                           color: Colors.orange,
                           size: 16,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           '$rating',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -102,15 +108,12 @@ class DestinationCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Text(
                       location,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     const Spacer(),
                     for (String participant in participants)
@@ -126,10 +129,7 @@ class DestinationCard extends StatelessWidget {
                         child: Text(
                           "+50",
                           style: TextStyle(
-                            fontFamily: 'SF UI Display',
-                            fontSize: 11,
-                            color: Colors.black,
-                          ),
+                              fontSize: 8, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

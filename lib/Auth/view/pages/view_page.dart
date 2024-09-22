@@ -23,7 +23,7 @@ class ViewPage extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Color.fromRGBO(27, 30, 40, 0.384),
+                    backgroundColor: const Color.fromRGBO(27, 30, 40, 0.384),
                     maxRadius: 20,
                     child: IconButton(
                       icon: const Icon(
@@ -67,7 +67,7 @@ class ViewPage extends StatelessWidget {
                 image: 'assets/images/Rectangle.png',
               ),
             ),
-            Positioned(
+            const Positioned(
               bottom: 20,
               left: 5,
               right: 5,

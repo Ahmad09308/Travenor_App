@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class OnboardPage3 extends StatelessWidget {
+  const OnboardPage3({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(

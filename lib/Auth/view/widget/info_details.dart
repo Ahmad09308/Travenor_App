@@ -9,13 +9,13 @@ class InfoDetails extends StatelessWidget {
   final List<String> participants;
 
   const InfoDetails({
-    Key? key,
+    super.key,
     required this.title,
     required this.location,
     required this.time,
     required this.rating,
     required this.participants,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

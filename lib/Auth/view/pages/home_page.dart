@@ -1,11 +1,24 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travenor_app/Auth/view/pages/FavoritePlacesPage.dart';
 import 'package:travenor_app/Auth/view/widget/custom_bottom_navigation_bar.dart';
 import 'package:travenor_app/Auth/view/widget/destination_card.dart';
 import 'package:travenor_app/core/bloc/bloc/airport_bloc_bloc.dart';
 import 'package:travenor_app/core/services/AirportApi.dart';
+import 'package:travenor_app/Auth/view/pages/AirportDetailsPage.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> savedItems = [];
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -13,7 +26,7 @@ class HomePage extends StatelessWidget {
         ..add(FetchAirportsEvent()),
       child: Scaffold(
         backgroundColor: Colors.white,
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -24,54 +37,85 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
-                      children: [
-                        // CircleAvatar(
-                        //   backgroundImage:
-                        //       AssetImage('assets/user.jpg'),
-                        //   radius: 25,
-                        // ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Leonardo',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    Container(
+                      height: 44,
+                      width: 150,
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(247, 247, 249, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: const Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage:
+                                AssetImage('assets/images/user.png'),
+                            radius: 25,
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 10),
+                          Text(
+                            'Leonardo',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.notifications),
+                    CircleAvatar(
+                      minRadius: 20,
+                      backgroundColor: const Color.fromRGBO(247, 247, 249, 1),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  FavoritePlacesPage(savedItems: savedItems),
+                            ),
+                          );
+                        },
+                        icon: const Badge(
+                            backgroundColor: Colors.red,
+                            alignment: Alignment(0.5, -0.5),
+                            child: Icon(
+                              Icons.notifications_none,
+                              size: 30,
+                            )),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                RichText(
-                  text: const TextSpan(
-                    text: 'Explore the ',
-                    style: TextStyle(
-                      fontSize: 38,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black,
+                const SizedBox(height: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: const TextSpan(
+                        text: 'Explore the ',
+                        style: TextStyle(
+                            fontSize: 38,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black),
+                        children: [
+                          TextSpan(
+                              text: '\nBeautiful ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(
+                            text: 'world!',
+                            style: TextStyle(
+                                color: Color.fromRGBO(255, 112, 41, 1),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
-                    children: [
-                      TextSpan(
-                        text: '\nBeautiful ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30),
+                      child: Container(
+                        alignment: Alignment.bottomRight,
+                        child: Image.asset('assets/images/a2.png'),
                       ),
-                      TextSpan(
-                        text: 'world!',
-                        style: TextStyle(
-                          color: Color.fromRGBO(255, 112, 41, 1),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -79,10 +123,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     const Text(
                       'Best Destination',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     TextButton(
                       onPressed: () {},
@@ -95,7 +137,7 @@ class HomePage extends StatelessWidget {
                   child: BlocBuilder<AirportBlocBloc, AirportBlocState>(
                     builder: (context, state) {
                       if (state is AirportBlocLoading) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       } else if (state is AirportBlocLoaded) {
                         return ListView.builder(
                           scrollDirection: Axis.horizontal,
@@ -104,11 +146,32 @@ class HomePage extends StatelessWidget {
                             final airport = state.airports[index];
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: DestinationCard(
-                                imageUrl: 'assets/images/destination.png',
-                                title: airport.name, 
-                                location: airport.city, 
-                                rating: 4.5,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AirportDetailsPage(airport: airport),
+                                    ),
+                                  );
+                                },
+                                child: DestinationCard(
+                                  imageUrl: 'assets/images/destination.png',
+                                  title: airport.name,
+                                  location: airport.city,
+                                  rating: 4.5,
+                                  onSave: () {
+                                    setState(() {
+                                      savedItems.add({
+                                        'title': airport.name,
+                                        'location': airport.city,
+                                        'imageUrl':
+                                            'assets/images/destination.png',
+                                      });
+                                    });
+                                  },
+                                ),
                               ),
                             );
                           },
