@@ -11,15 +11,32 @@ part 'airport_bloc_state.dart';
 class AirportBlocBloc extends Bloc<AirportBlocEvent, AirportBlocState> {
   final AirportService airportService;
 
-  AirportBlocBloc({required this.airportService}) : super(AirportBlocInitial()) {
+  AirportBlocBloc({required this.airportService})
+      : super(AirportBlocInitial()) {
     on<FetchAirportsEvent>((event, emit) async {
       emit(AirportBlocLoading());
       try {
-        final List<AirportModel> airports = await airportService.getAllAirports();
+        final List<AirportModel> airports =
+            await airportService.getAllAirports();
         emit(AirportBlocLoaded(airports));
       } catch (e) {
         emit(AirportBlocError(e.toString()));
       }
+    });
+
+    on<SearchAirportsEvent>((event, emit) async {
+      emit(AirportBlocLoading());
+      try {
+        final List<AirportModel> airports =
+            await airportService.searchAirports(event.query);
+        emit(AirportBlocLoaded(airports));
+      } catch (e) {
+        emit(AirportBlocError(e.toString()));
+      }
+    });
+
+    on<ClearSearchEvent>((event, emit) {
+      emit(AirportBlocLoaded(const []));
     });
   }
 }

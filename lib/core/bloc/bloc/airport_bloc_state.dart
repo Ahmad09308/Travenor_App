@@ -18,3 +18,12 @@ final class AirportBlocError extends AirportBlocState {
 
   AirportBlocError(this.message);
 }
+
+
+final class AirportBlocSearching extends AirportBlocState {}
+
+final class AirportBlocSearchLoaded extends AirportBlocState {
+  final List<AirportModel> airports;
+
+  AirportBlocSearchLoaded(this.airports);
+}

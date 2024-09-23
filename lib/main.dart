@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travenor_app/Auth/view/pages/SearchScreen.dart';
 import 'package:travenor_app/Auth/view/pages/Splash.dart';
 import 'package:travenor_app/core/bloc/bloc/favorite_bloc.dart';
 import 'package:travenor_app/core/config/bloc_observ.dart';
 import 'package:travenor_app/core/config/favorite_repository.dart';
-import 'package:travenor_app/core/config/service_locater.dart';
+import 'package:travenor_app/core/services/AirportApi.dart'; 
+import 'package:travenor_app/core/bloc/bloc/airport_bloc_bloc.dart'; 
 
 void main() {
   // setup();
@@ -22,14 +24,18 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               FavoriteBloc(favoriteRepository: FavoriteRepository())
-                ..add(LoadFavoritesEvent()), // تحميل المفضلات عند بدء التطبيق
+                ..add(LoadFavoritesEvent()),
         ),
-        // يمكنك إضافة المزيد من BlocProviders هنا إذا كنت تحتاج لبلوكات أخرى
+        BlocProvider(
+          create: (context) => AirportBlocBloc(
+            airportService: AirportServiceImp(),
+          ),
+        ),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          body: Splash(),
+          body: SearchPage(),
         ),
       ),
     );
