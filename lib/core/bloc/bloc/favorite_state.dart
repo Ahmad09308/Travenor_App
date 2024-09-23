@@ -1,6 +1,20 @@
 part of 'favorite_bloc.dart';
 
 @immutable
-sealed class FavoriteState {}
+abstract class FavoriteState {}
 
-final class FavoriteInitial extends FavoriteState {}
+class FavoriteInitial extends FavoriteState {}
+
+class FavoriteLoading extends FavoriteState {}
+
+class FavoriteLoaded extends FavoriteState {
+  final List<Map<String, dynamic>> favorites;
+
+  FavoriteLoaded(this.favorites);
+}
+
+class FavoriteError extends FavoriteState {
+  final String message;
+
+  FavoriteError(this.message);
+}

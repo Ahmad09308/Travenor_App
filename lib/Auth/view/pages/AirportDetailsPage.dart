@@ -139,10 +139,10 @@ class AirportDetailsPage extends StatelessWidget {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          _buildImageThumbnail('assets/images/destination.png'),
-                          _buildImageThumbnail('assets/images/destination.png'),
-                          _buildImageThumbnail('assets/images/destination.png'),
-                          _buildImageThumbnail('assets/images/destination.png'),
+                          buildImageThumbnail('assets/images/destination.png'),
+                          buildImageThumbnail('assets/images/destination.png'),
+                          buildImageThumbnail('assets/images/destination.png'),
+                          buildImageThumbnail('assets/images/destination.png'),
                         ],
                       ),
                     ),
@@ -293,7 +293,7 @@ class AirportDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildImageThumbnail(String imagePath) {
+  Widget buildImageThumbnail(String imagePath) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: ClipRRect(

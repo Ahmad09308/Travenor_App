@@ -1,13 +1,13 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:travenor_app/Auth/view/pages/FavoritePlacesPage.dart';
 import 'package:travenor_app/Auth/view/widget/custom_bottom_navigation_bar.dart';
 import 'package:travenor_app/Auth/view/widget/destination_card.dart';
 import 'package:travenor_app/core/bloc/bloc/airport_bloc_bloc.dart';
+import 'package:travenor_app/core/bloc/bloc/favorite_bloc.dart';
+import 'package:travenor_app/core/config/favorite_repository.dart';
 import 'package:travenor_app/core/services/AirportApi.dart';
-import 'package:travenor_app/Auth/view/pages/AirportDetailsPage.dart';
+import 'FavoritePlacesPage.dart';
+import 'AirportDetailsPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,13 +17,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, dynamic>> savedItems = [];
+  @override
+  void initState() {
+    super.initState();
+    context.read<FavoriteBloc>().add(LoadFavoritesEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AirportBlocBloc(airportService: AirportServiceImp())
-        ..add(FetchAirportsEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              AirportBlocBloc(airportService: AirportServiceImp())
+                ..add(FetchAirportsEvent()),
+        ),
+        BlocProvider(
+          create: (context) => FavoriteBloc(
+            favoriteRepository: FavoriteRepository(),
+          )..add(LoadFavoritesEvent()),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         bottomNavigationBar: const CustomBottomNavigationBar(),
@@ -64,22 +78,27 @@ class _HomePageState extends State<HomePage> {
                       minRadius: 20,
                       backgroundColor: const Color.fromRGBO(247, 247, 249, 1),
                       child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  FavoritePlacesPage(savedItems: savedItems),
-                            ),
-                          );
+                        onPressed: () async {
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const FavoritePlacesPage(),
+                              ),
+                            );
+                          });
+
+                          setState(() {
+                            context
+                                .read<FavoriteBloc>()
+                                .add(LoadFavoritesEvent());
+                          });
                         },
-                        icon: const Badge(
-                            backgroundColor: Colors.red,
-                            alignment: Alignment(0.5, -0.5),
-                            child: Icon(
-                              Icons.notifications_none,
-                              size: 30,
-                            )),
+                        icon: const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ],
@@ -134,53 +153,63 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: BlocBuilder<AirportBlocBloc, AirportBlocState>(
-                    builder: (context, state) {
-                      if (state is AirportBlocLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (state is AirportBlocLoaded) {
-                        return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: state.airports.length,
-                          itemBuilder: (context, index) {
-                            final airport = state.airports[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AirportDetailsPage(airport: airport),
-                                    ),
-                                  );
-                                },
-                                child: DestinationCard(
-                                  imageUrl: 'assets/images/destination.png',
-                                  title: airport.name,
-                                  location: airport.city,
-                                  rating: 4.5,
-                                  onSave: () {
-                                    setState(() {
-                                      savedItems.add({
-                                        'title': airport.name,
-                                        'location': airport.city,
-                                        'imageUrl':
-                                            'assets/images/destination.png',
-                                      });
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else if (state is AirportBlocError) {
-                        return Center(child: Text('Error: ${state.message}'));
+                  child: BlocListener<FavoriteBloc, FavoriteState>(
+                    listener: (context, state) {
+                      if (state is FavoriteLoaded) {
+                        setState(() {});
                       }
-                      return Container();
                     },
+                    child: BlocBuilder<AirportBlocBloc, AirportBlocState>(
+                      builder: (context, state) {
+                        if (state is AirportBlocLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is AirportBlocLoaded) {
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.airports.length,
+                            itemBuilder: (context, index) {
+                              final airport = state.airports[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AirportDetailsPage(
+                                                airport: airport),
+                                      ),
+                                    );
+                                  },
+                                  child: DestinationCard(
+                                    imageUrl: 'assets/images/destination.png',
+                                    title: airport.name,
+                                    location: airport.city,
+                                    rating: 4.5,
+                                    onSave: () {
+                                      context.read<FavoriteBloc>().add(
+                                            AddFavoriteEvent({
+                                              'title': airport.name,
+                                              'location': airport.city,
+                                              'imageUrl':
+                                                  'assets/images/destination.png',
+                                            }),
+                                          );
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else if (state is AirportBlocError) {
+                          return Center(child: Text('Error: ${state.message}'));
+                        }
+                        return Container();
+                      },
+                    ),
                   ),
                 ),
               ],
