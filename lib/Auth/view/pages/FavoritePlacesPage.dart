@@ -8,15 +8,50 @@ class FavoritePlacesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Favorite Places'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                CircleAvatar(
+                  backgroundColor: const Color.fromRGBO(247, 247, 249, 1),
+                  maxRadius: 20,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.black,
+                      size: 19,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                const Spacer(),
+                const Text(
+                  'Favorite Places',
+                  style: TextStyle(
+                    fontFamily: 'SF UI Display',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                const Spacer(),
+              ],
+            ),
             const SizedBox(height: 16),
+            const Text(
+              'Favorite Places',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Expanded(
               child: BlocBuilder<FavoriteBloc, FavoriteState>(
                 builder: (context, state) {
