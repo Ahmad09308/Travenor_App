@@ -111,7 +111,9 @@ class AirportDetailsPage extends StatelessWidget {
                         Icon(Icons.location_on, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
-                          airport.city,
+                          airport.city.length > 10
+                              ? '${airport.city.substring(0, 10)}...'
+                              : airport.city,
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         const Spacer(),
@@ -284,12 +286,15 @@ class AirportDetailsPage extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                 child: CustomButton(
                   text: 'Book Now',
-                  onPressed: () {Navigator.push(
+                  onPressed: () {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ViewPage(selectedAirport: airport),
+                        builder: (context) =>
+                            ViewPage(selectedAirport: airport),
                       ),
-                    );},
+                    );
+                  },
                 ),
               ),
             ),

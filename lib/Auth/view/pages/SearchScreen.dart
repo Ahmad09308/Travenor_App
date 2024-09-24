@@ -183,7 +183,11 @@ class PlaceCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.location_on, size: 16),
                   const SizedBox(width: 4),
-                  Text(airport.city),
+                  Text(
+                    airport.city.length > 10
+                        ? '${airport.city.substring(0, 10)}...'
+                        : airport.city,
+                  ),
                 ],
               ),
             ),
