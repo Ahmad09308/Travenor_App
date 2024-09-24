@@ -90,7 +90,7 @@ class ViewPage extends StatelessWidget {
                     ];
 
                     return InfoDetailsCarousel(
-                      airports: combinedAirports,
+                      airports: combinedAirports, 
                     );
                   } else if (state is AirportBlocError) {
                     return Center(child: Text('Error: ${state.message}'));

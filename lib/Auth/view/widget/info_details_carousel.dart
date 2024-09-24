@@ -5,7 +5,10 @@ import 'package:travenor_app/core/model/AirportModel.dart';
 class InfoDetailsCarousel extends StatelessWidget {
   final List<AirportModel> airports;
 
-  const InfoDetailsCarousel({super.key, required this.airports});
+  const InfoDetailsCarousel({
+    super.key,
+    required this.airports,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +33,7 @@ class InfoDetailsCarousel extends StatelessWidget {
               ],
               latitude: airport.location.latitude,
               longitude: airport.location.longitude,
+              airport: airport, 
             ),
           );
         },

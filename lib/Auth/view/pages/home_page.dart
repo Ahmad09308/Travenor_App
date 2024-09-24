@@ -116,18 +116,14 @@ class _HomePageContentState extends State<HomePageContent> {
                   CircleAvatar(
                     minRadius: 20,
                     backgroundColor: const Color.fromRGBO(247, 247, 249, 1),
-                    child: IconButton(
-                      onPressed: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FavoritePlacesPage(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
+                    child: Badge(
+                      backgroundColor: Colors.red,
+                      alignment: Alignment(0.2, -0.3),
+                      child: IconButton(
+                        onPressed: () async {},
+                        icon: const Icon(
+                          Icons.notifications,
+                        ),
                       ),
                     ),
                   ),
@@ -239,7 +235,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 ),
               ),
               const SizedBox(
-                height: 55,
+                height: 90,
               ),
             ],
           ),

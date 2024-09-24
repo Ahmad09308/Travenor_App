@@ -61,7 +61,6 @@ class _FavoritePlacesPageState extends State<FavoritePlacesPage> {
               child: BlocBuilder<FavoriteBloc, FavoriteState>(
                 builder: (context, state) {
                   if (state is FavoriteLoading) {
-                    
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is FavoriteLoaded) {
                     if (state.favorites.isEmpty) {
@@ -69,8 +68,7 @@ class _FavoritePlacesPageState extends State<FavoritePlacesPage> {
                           child: Text('No favorite places added.'));
                     }
 
-                    return GridView.builder( 
-                      
+                    return GridView.builder(
                       itemCount: state.favorites.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -83,7 +81,6 @@ class _FavoritePlacesPageState extends State<FavoritePlacesPage> {
                         final item = state.favorites[index];
                         return buildPlaceCard(context, item);
                       },
-                      
                     );
                   } else if (state is FavoriteError) {
                     return Center(child: Text(state.message));
@@ -92,6 +89,9 @@ class _FavoritePlacesPageState extends State<FavoritePlacesPage> {
                   return const Center(child: Text('No favorite places added.'));
                 },
               ),
+            ),
+            const SizedBox(
+              height: 90,
             ),
           ],
         ),
