@@ -7,6 +7,8 @@ class InfoDetails extends StatelessWidget {
   final String time;
   final double rating;
   final List<String> participants;
+  final double latitude;
+  final double longitude;
 
   const InfoDetails({
     super.key,
@@ -15,12 +17,22 @@ class InfoDetails extends StatelessWidget {
     required this.time,
     required this.rating,
     required this.participants,
+    required this.latitude,
+    required this.longitude,
   });
+
+  String truncateText(String text, int maxLength) {
+    if (text.length <= maxLength) return text;
+    return '${text.substring(0, maxLength)}...';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final maxLength = MediaQuery.of(context).size.width ~/
+        15; // Adjust this value to fit design
+
     return Container(
-      width: 300, 
+      width: 300,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -40,13 +52,19 @@ class InfoDetails extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'SF UI Display',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18,
-                  color: Colors.white,
+              Expanded(
+                child: Text(
+                  truncateText(
+                      title, maxLength), 
+                  style: const TextStyle(
+                    fontFamily: 'SF UI Display',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.white,
+                    overflow:
+                        TextOverflow.ellipsis, 
+                  ),
+                  maxLines: 1,
                 ),
               ),
               Row(
@@ -72,13 +90,19 @@ class InfoDetails extends StatelessWidget {
               const Icon(Icons.location_on_outlined,
                   size: 16, color: Colors.white),
               const SizedBox(width: 8),
-              Text(
-                location,
-                style: const TextStyle(
-                  fontFamily: 'SF UI Display',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13,
-                  color: Colors.white,
+              Expanded(
+                child: Text(
+                  truncateText(location,
+                      maxLength), 
+                  style: const TextStyle(
+                    fontFamily: 'SF UI Display',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    color: Colors.white,
+                    overflow:
+                        TextOverflow.ellipsis, 
+                  ),
+                  maxLines: 1,
                 ),
               ),
               const Spacer(),
@@ -123,7 +147,10 @@ class InfoDetails extends StatelessWidget {
           const SizedBox(height: 16),
           CustomButton(
             text: 'See On The Map',
-            onPressed: () {},
+            onPressed: () {
+              // ignore: avoid_print
+              print('Latitude: $latitude, Longitude: $longitude');
+            },
           ),
         ],
       ),

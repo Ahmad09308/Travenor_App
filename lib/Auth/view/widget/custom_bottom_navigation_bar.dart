@@ -1,7 +1,10 @@
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
-  const CustomBottomNavigationBar({super.key});
+  final Function(int) onTabSelected;
+
+  const CustomBottomNavigationBar({required this.onTabSelected, super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -12,42 +15,46 @@ class CustomBottomNavigationBar extends StatefulWidget {
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
-      showUnselectedLabels: true,
+    return ConvexAppBar(
+      style: TabStyle.fixedCircle,
+      backgroundColor: Colors.white,
+      color: Colors.grey,
+      activeColor: Colors.blue,
+      curveSize: 800,
+      top: -30,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+        TabItem(
+          icon: Icons.home_outlined,
+          //  ImageIcon(
+          //   AssetImage('assets/images/homeIcon.png'), 
+          //   size: 24,
+          // ),
+          title: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
-          label: 'Calendar',
+        TabItem(
+          icon: Icons.bookmark_border,
+          title: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle, size: 40),
-          label: '',
+        TabItem(
+          icon: Icon(
+            Icons.search,
+            color: Colors.white,
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.message),
-          label: 'Messages',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
+        TabItem(icon: Icons.message_outlined, title: 'Messages'),
+        TabItem(icon: Icons.person_3_outlined, title: 'Profile'),
       ],
+      initialActiveIndex: _selectedIndex,
+      onTap: (int index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        widget.onTabSelected(index);
+      },
+      height: 60,
+      elevation: 2.0,
     );
   }
 }

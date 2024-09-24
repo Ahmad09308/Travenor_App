@@ -1,12 +1,16 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travenor_app/Auth/view/pages/AirportDetailsPage.dart';
 import 'package:travenor_app/core/bloc/bloc/airport_bloc_bloc.dart';
 import 'package:travenor_app/core/model/AirportModel.dart';
 
 class SearchPage extends StatelessWidget {
+  const SearchPage({super.key});
   @override
   Widget build(BuildContext context) {
-    final AirportBlocBloc airportBloc = BlocProvider.of<AirportBlocBloc>(context);
+    final AirportBlocBloc airportBloc =
+        BlocProvider.of<AirportBlocBloc>(context);
 
     return Scaffold(
       body: Column(
@@ -45,7 +49,7 @@ class SearchPage extends StatelessWidget {
                 onPressed: () {
                   airportBloc.add(FetchAirportsEvent());
                 },
-                child: Text(
+                child: const Text(
                   'Cancel',
                   style: TextStyle(color: Colors.blue),
                 ),
@@ -63,8 +67,8 @@ class SearchPage extends StatelessWidget {
                 }
               },
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                suffixIcon: Icon(Icons.mic),
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: const Icon(Icons.mic),
                 hintText: 'Search Places',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -75,8 +79,8 @@ class SearchPage extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Search Places',
               style: TextStyle(
@@ -89,12 +93,13 @@ class SearchPage extends StatelessWidget {
             child: BlocBuilder<AirportBlocBloc, AirportBlocState>(
               builder: (context, state) {
                 if (state is AirportBlocLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (state is AirportBlocLoaded) {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 16.0,
                         crossAxisSpacing: 16.0,
@@ -109,7 +114,7 @@ class SearchPage extends StatelessWidget {
                 } else if (state is AirportBlocError) {
                   return Center(child: Text('Error: ${state.message}'));
                 } else {
-                  return Center(child: Text('No results found.'));
+                  return const Center(child: Text('No results found.'));
                 }
               },
             ),
@@ -123,58 +128,67 @@ class SearchPage extends StatelessWidget {
 class PlaceCard extends StatelessWidget {
   final AirportModel airport;
 
-  PlaceCard({required this.airport});
+  const PlaceCard({super.key, required this.airport});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.0),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 4),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AirportDetailsPage(airport: airport),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
-            child: 
-                 Image.asset(
-                    'assets/images/destination.png',
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              airport.name.length > 20
-                  ? '${airport.name.substring(0, 20)}...'
-                  : airport.name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16.0),
+              child: Image.asset(
+                'assets/images/destination.png',
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: [
-                Icon(Icons.location_on, size: 16),
-                SizedBox(width: 4),
-                Text(airport.city),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                airport.name.length > 10
+                    ? '${airport.name.substring(0, 10)}...'
+                    : airport.name,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.location_on, size: 16),
+                  const SizedBox(width: 4),
+                  Text(airport.city),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

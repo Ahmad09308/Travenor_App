@@ -1,6 +1,7 @@
 // ignore_for_file: sized_box_for_whitespace, file_names
 
 import 'package:flutter/material.dart';
+import 'package:travenor_app/Auth/view/pages/view_page.dart';
 import 'package:travenor_app/Auth/view/widget/button.dart';
 import 'package:travenor_app/core/model/AirportModel.dart';
 
@@ -283,7 +284,12 @@ class AirportDetailsPage extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                 child: CustomButton(
                   text: 'Book Now',
-                  onPressed: () {},
+                  onPressed: () {Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ViewPage(selectedAirport: airport),
+                      ),
+                    );},
                 ),
               ),
             ),

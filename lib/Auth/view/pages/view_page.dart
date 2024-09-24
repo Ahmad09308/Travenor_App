@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travenor_app/Auth/view/widget/info_card.dart';
 import 'package:travenor_app/Auth/view/widget/info_details_carousel.dart';
+import 'package:travenor_app/core/bloc/bloc/airport_bloc_bloc.dart';
+import 'package:travenor_app/core/model/AirportModel.dart';
 
 class ViewPage extends StatelessWidget {
-  const ViewPage({super.key});
+  final AirportModel selectedAirport;
+
+  const ViewPage({super.key, required this.selectedAirport});
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +72,33 @@ class ViewPage extends StatelessWidget {
                 image: 'assets/images/Rectangle.png',
               ),
             ),
-            const Positioned(
+            Positioned(
               bottom: 20,
               left: 5,
               right: 5,
-              child: InfoDetailsCarousel(),
+              child: BlocBuilder<AirportBlocBloc, AirportBlocState>(
+                builder: (context, state) {
+                  if (state is AirportBlocLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is AirportBlocLoaded) {
+                    final List<AirportModel> airports = state.airports;
+
+                    final List<AirportModel> combinedAirports = [
+                      selectedAirport,
+                      ...airports
+                          .where((airport) => airport.id != selectedAirport.id),
+                    ];
+
+                    return InfoDetailsCarousel(
+                      airports: combinedAirports,
+                    );
+                  } else if (state is AirportBlocError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  }
+
+                  return const Center(child: Text('No Data'));
+                },
+              ),
             ),
           ],
         ),
