@@ -12,84 +12,92 @@ class SearchPage extends StatelessWidget {
     final AirportBlocBloc airportBloc =
         BlocProvider.of<AirportBlocBloc>(context);
 
+    final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
+
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 25),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              CircleAvatar(
-                backgroundColor: const Color.fromRGBO(247, 247, 249, 1),
-                maxRadius: 20,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.black,
-                    size: 19,
+      body: SafeArea( // Ensures content is within safe areas
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // const SizedBox(height: 25), // Replaced by SafeArea
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: theme.cardColor,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: theme.iconTheme.color,
+                        size: 19,
+                      ),
+                      onPressed: () {
+                        if (Navigator.canPop(context)) Navigator.pop(context);
+                      },
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+                  const Expanded(
+                    child: Text(
+                      'Search',
+                      textAlign: TextAlign.center,
+                      style: TextStyle( // This style was okay, but make color themeable
+                        fontFamily: 'SF UI Display',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        // color: theme.textTheme.titleLarge?.color, // Use theme color
+                      ), // Will inherit color from DefaultTextStyle or can be set explicitly
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Clear search or alternative cancel action
+                      airportBloc.add(ClearSearchEvent());
+                      // Potentially navigate back or clear text field
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: theme.primaryColor),
+                    ),
+                  ),
+                ],
               ),
-              const Spacer(),
-              const Text(
-                'Search',
-                style: TextStyle(
-                  fontFamily: 'SF UI Display',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  airportBloc.add(FetchAirportsEvent());
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    airportBloc.add(ClearSearchEvent());
+                  } else {
+                    airportBloc.add(SearchAirportsEvent(value));
+                  }
                 },
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.blue),
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search, color: theme.iconTheme.color?.withOpacity(0.7)),
+                  suffixIcon: Icon(Icons.mic, color: theme.iconTheme.color?.withOpacity(0.7)),
+                  hintText: 'Search Places',
+                  hintStyle: theme.inputDecorationTheme.hintStyle,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: theme.brightness == Brightness.light
+                             ? Colors.grey[200]
+                             : theme.inputDecorationTheme.fillColor ?? theme.colorScheme.surfaceVariant,
                 ),
               ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              onChanged: (value) {
-                if (value.isEmpty) {
-                  airportBloc.add(ClearSearchEvent());
-                } else {
-                  airportBloc.add(SearchAirportsEvent(value));
-                }
-              },
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: const Icon(Icons.mic),
-                hintText: 'Search Places',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Search Results', // Changed from "Search Places"
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Search Places',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
+            Expanded(
             child: BlocBuilder<AirportBlocBloc, AirportBlocState>(
               builder: (context, state) {
                 if (state is AirportBlocLoading) {
@@ -97,17 +105,29 @@ class SearchPage extends StatelessWidget {
                 } else if (state is AirportBlocLoaded) {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 16.0,
-                        crossAxisSpacing: 16.0,
-                        childAspectRatio: 0.8,
-                      ),
-                      itemCount: state.airports.length,
-                      itemBuilder: (context, index) {
-                        return PlaceCard(airport: state.airports[index]);
+                    child: LayoutBuilder( // Use LayoutBuilder for responsive crossAxisCount
+                      builder: (context, constraints) {
+                        int crossAxisCount = 2;
+                        if (constraints.maxWidth > 900) { // Example breakpoint for large tablets
+                          crossAxisCount = 4;
+                        } else if (constraints.maxWidth > 600) { // Example breakpoint for tablets
+                          crossAxisCount = 3;
+                        }
+                        double childAspectRatio = (constraints.maxWidth / crossAxisCount) / ( (constraints.maxWidth / crossAxisCount) / 0.75 ); // Maintain aspect ratio closer to 3/4
+
+                        return GridView.builder(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: 16.0,
+                            crossAxisSpacing: 16.0,
+                            childAspectRatio: childAspectRatio, // Adjust as needed
+                          ),
+                          itemCount: state.airports.length,
+                          itemBuilder: (context, index) {
+                            return PlaceCard(airport: state.airports[index]);
+                          }
+                        );
+                      }
                       },
                     ),
                   );
@@ -132,6 +152,7 @@ class PlaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -141,54 +162,63 @@ class PlaceCard extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
+      child: Card( // Using Card widget for better semantics and default elevation/shape
+        margin: EdgeInsets.zero, // GridView already provides spacing
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
         ),
+        elevation: 4,
+        shadowColor: theme.brightness == Brightness.dark ? Colors.black.withOpacity(0.7) : Colors.grey.withOpacity(0.3),
+        color: theme.cardColor,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch children horizontally
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16.0),
-              child: Image.asset(
-                'assets/images/destination.png',
-                height: 100,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                airport.name.length > 10
-                    ? '${airport.name.substring(0, 10)}...'
-                    : airport.name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            Expanded( // Image takes available vertical space in the Card's Column
+              flex: 3, // Give more space to image
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0),
+                ),
+                child: Image.asset(
+                  'assets/images/destination.png', // Should be airport.imageUrl if available
+                  // height: 100, // Removed fixed height
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 50, color: theme.iconTheme.color?.withOpacity(0.5)),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                children: [
-                  const Icon(Icons.location_on, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    airport.city.length > 10
-                        ? '${airport.city.substring(0, 10)}...'
-                        : airport.city,
-                  ),
-                ],
+            Expanded( // Text content takes remaining space
+              flex: 2, // Give less space to text compared to image
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround, // Distribute space
+                  children: [
+                    Text(
+                      airport.name,
+                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      maxLines: 2, // Allow up to 2 lines for name
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, size: 16, color: theme.iconTheme.color?.withOpacity(0.7)),
+                        const SizedBox(width: 4),
+                        Expanded( // Ensure city name doesn't overflow the row
+                          child: Text(
+                            airport.city,
+                            style: theme.textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

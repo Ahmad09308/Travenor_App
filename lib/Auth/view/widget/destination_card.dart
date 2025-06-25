@@ -14,6 +14,7 @@ class DestinationCard extends StatelessWidget {
   final String location;
   final double rating;
   final VoidCallback onSave;
+  final bool isFavorite; // New parameter
 
   const DestinationCard({super.key, 
     required this.imageUrl,
@@ -21,21 +22,23 @@ class DestinationCard extends StatelessWidget {
     required this.location,
     required this.rating,
     required this.onSave,
+    this.isFavorite = false, // Default to false
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       width: 250,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.white,
+        color: theme.cardColor, // Use theme's card color
         boxShadow: [
-          const BoxShadow(
-            color: Colors.black12,
+          BoxShadow(
+            color: theme.brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.black12, // Adjust shadow for dark theme
             blurRadius: 8,
-            spreadRadius: 3,
+            spreadRadius: 1, // Reduced spread for a possibly subtler look
           ),
         ],
       ),
@@ -58,13 +61,13 @@ class DestinationCard extends StatelessWidget {
                 right: 10,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
+                    color: Colors.black.withOpacity(0.3), // Consistent scrim color
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.bookmark_border,
-                      color: Color.fromARGB(255, 255, 255, 255),
+                    icon: Icon(
+                      isFavorite ? Icons.bookmark : Icons.bookmark_border, // Change icon based on state
+                      color: isFavorite ? theme.primaryColor : Colors.white, // Change color based on state
                     ),
                     onPressed: onSave,
                   ),
@@ -84,24 +87,26 @@ class DestinationCard extends StatelessWidget {
                       title.length > 20
                           ? '${title.substring(0, 18)}...'
                           : title,
-                      style: const TextStyle(
+                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                         color: theme.textTheme.bodyLarge?.color, // Use theme color
                       ),
                     ),
                     Row(
                       children: [
                         const Icon(
                           Icons.star,
-                          color: Colors.orange,
+                           color: Colors.orange, // Keep star color
                           size: 16,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '$rating',
-                          style: const TextStyle(
+                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
+                             color: theme.textTheme.bodyMedium?.color, // Use theme color
                           ),
                         ),
                       ],
@@ -113,7 +118,7 @@ class DestinationCard extends StatelessWidget {
                   children: [
                     Text(
                       location,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 14, color: theme.textTheme.bodySmall?.color ?? Colors.grey), // Use theme color
                     ),
                     const Spacer(),
                     for (String participant in participants)
@@ -121,15 +126,18 @@ class DestinationCard extends StatelessWidget {
                     Container(
                       width: 24,
                       height: 24,
-                      decoration: const BoxDecoration(
+                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color.fromRGBO(229, 244, 255, 1),
+                         color: theme.primaryColor.withOpacity(0.1), // Use a lighter shade of primary or a specific theme color
                       ),
-                      child: const Center(
+                       child: Center(
                         child: Text(
                           "+50",
                           style: TextStyle(
-                              fontSize: 8, fontWeight: FontWeight.bold),
+                               fontSize: 8,
+                               fontWeight: FontWeight.bold,
+                               color: theme.primaryColor, // Text color related to primary
+                           ),
                         ),
                       ),
                     ),

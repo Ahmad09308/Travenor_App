@@ -87,33 +87,34 @@ class MapScreen extends StatelessWidget {
                         ),
                         MarkerLayer(markers: markers),
                         Positioned(
-                          top: 20,
-                          left: 20,
+                          top: MediaQuery.of(context).padding.top + 10, // Respect safe area
+                          left: 16,
+                          right: 16, // Ensure it doesn't overflow if title is long
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundColor:
-                                    const Color.fromRGBO(27, 30, 40, 0.384),
-                                maxRadius: 20,
+                                backgroundColor: Theme.of(context).cardColor.withOpacity(0.8),
                                 child: IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.arrow_back_ios_new,
-                                    color: Color.fromRGBO(250, 250, 250, 1),
+                                    color: Theme.of(context).iconTheme.color,
                                     size: 19,
                                   ),
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    if (Navigator.canPop(context)) Navigator.pop(context);
                                   },
                                 ),
                               ),
-                              const SizedBox(width: 20),
-                              const Text(
-                                'Show airport on map',
-                                style: TextStyle(
-                                  fontFamily: 'SF UI Display',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                  color: Color.fromARGB(255, 20, 1, 1),
+                              const SizedBox(width: 16),
+                              Expanded( // Allow title to take available space and potentially wrap or ellipsis
+                                child: Text(
+                                  'Show airport on map',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    // color: Theme.of(context).textTheme.bodyLarge?.color, // Inherits color
+                                    // Adding a shadow or background for better visibility on map might be needed
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -122,14 +123,12 @@ class MapScreen extends StatelessWidget {
                         Positioned(
                           left: 10,
                           right: 10,
-                          bottom: 10,
+                           bottom: 10, // Consider MediaQuery.of(context).padding.bottom + 10 for safe area
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 250,
-                              child: InfoDetailsCarouselMap(
-                                airports: combinedAirports,
-                              ),
+                             padding: const EdgeInsets.symmetric(horizontal: 8.0), // Keep horizontal padding
+                             // SizedBox with fixed width removed to allow carousel to be responsive
+                             child: InfoDetailsCarouselMap(
+                               airports: combinedAirports,
                             ),
                           ),
                         ),

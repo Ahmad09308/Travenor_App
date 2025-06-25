@@ -17,11 +17,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bottomNavTheme = theme.bottomNavigationBarTheme;
+
     return ConvexAppBar(
       style: TabStyle.fixedCircle,
-      backgroundColor: Colors.white,
-      color: Colors.grey,
-      activeColor: Colors.blue,
+      backgroundColor: bottomNavTheme.backgroundColor ?? theme.canvasColor, // Use theme color
+      color: bottomNavTheme.unselectedItemColor ?? Colors.grey, // For inactive items
+      activeColor: bottomNavTheme.selectedItemColor ?? theme.primaryColor, // For active items
       curveSize: 800,
       top: -30,
       items: const [

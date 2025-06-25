@@ -26,14 +26,25 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
         final currentFavorites = List<Map<String, dynamic>>.from(
             (state as FavoriteLoaded).favorites);
 
+        // Check if newFavorite has an 'id' key and it's not null
+        final newFavoriteId = event.newFavorite['id'];
+        if (newFavoriteId == null) {
+          // Optionally emit an error or handle cases where id is missing
+          print("Warning: Attempted to add a favorite without an ID.");
+          return;
+        }
+
         final isAlreadySaved = currentFavorites.any((item) =>
-            item['title'] == event.newFavorite['title'] &&
-            item['location'] == event.newFavorite['location']);
+            item['id'] == newFavoriteId);
 
         if (!isAlreadySaved) {
           currentFavorites.add(event.newFavorite);
           await favoriteRepository.saveFavorites(currentFavorites);
           emit(FavoriteLoaded(currentFavorites));
+        } else {
+          // Optionally, if it's already saved, maybe remove it (toggle behavior)
+          // Or just do nothing / provide feedback it's already a favorite
+          print("Item already in favorites.");
         }
       }
     });
@@ -42,9 +53,14 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
         final currentFavorites = List<Map<String, dynamic>>.from(
             (state as FavoriteLoaded).favorites);
 
+        final favoriteToRemoveId = event.favoriteToRemove['id'];
+        if (favoriteToRemoveId == null) {
+          print("Warning: Attempted to remove a favorite without an ID.");
+          return;
+        }
+
         currentFavorites.removeWhere((item) =>
-            item['title'] == event.favoriteToRemove['title'] &&
-            item['location'] == event.favoriteToRemove['location']);
+            item['id'] == favoriteToRemoveId);
 
         await favoriteRepository.saveFavorites(currentFavorites);
         emit(FavoriteLoaded(currentFavorites));
